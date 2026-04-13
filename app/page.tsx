@@ -7,8 +7,46 @@ import { ContactSection } from "@/components/sections/contact";
 import { MainNav } from "@/components/sections/navbar";
 
 export default function HomePage() {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        name: "Noro Studio",
+        url: siteUrl,
+        inLanguage: "lt-LT",
+        potentialAction: {
+          "@type": "SearchAction",
+          target: `${siteUrl}/?q={search_term_string}`,
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
+        "@type": "ProfessionalService",
+        name: "Noro Studio",
+        url: siteUrl,
+        logo: `${siteUrl}/logo/Logo.svg`,
+        image: `${siteUrl}/logo/Logo.svg`,
+        description:
+          "Kuriame modernias interneto svetaines ir portfolio sprendimus: dizainas, programavimas ir SEO optimizacija.",
+        areaServed: "Lietuva",
+        serviceType: [
+          "Interneto svetainių kūrimas",
+          "UI/UX dizainas",
+          "SEO optimizacija",
+          "Svetainių priežiūra"
+        ]
+      }
+    ]
+  };
+
   return (
     <div className="flex min-h-screen flex-col">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <MainNav />
       <main className="flex-1">
         <HeroSection />
