@@ -29,9 +29,9 @@ export const metadata: Metadata = {
     canonical: "/"
   },
   icons: {
-    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
-    shortcut: ["/icon.svg"],
-    apple: [{ url: "/apple-icon.svg", type: "image/svg+xml" }]
+    icon: [{ url: "/logo/Logo.svg", type: "image/svg+xml" }],
+    shortcut: ["/logo/Logo.svg"],
+    apple: [{ url: "/logo/Logo.svg", type: "image/svg+xml" }]
   },
   openGraph: {
     title: defaultTitle,
@@ -43,8 +43,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: "/logo/Logo.svg",
-        width: 1200,
-        height: 630,
+        width: 1500,
+        height: 1500,
         alt: "Noro Studio logotipas"
       }
     ]
