@@ -1,5 +1,7 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { Container } from "@/components/ui";
-import { prisma } from "@/lib/db";
 import { MotionReveal } from "@/components/motion-reveal";
 
 const fallback = [
@@ -41,42 +43,45 @@ const fallback = [
   }
 ];
 
-function withTimeout<T>(promise: Promise<T>, timeoutMs: number) {
-  return Promise.race<T>([
-    promise,
-    new Promise<T>((_, reject) =>
-      setTimeout(() => reject(new Error(`Services DB timeout after ${timeoutMs}ms`)), timeoutMs)
-    )
-  ]);
-}
+type ServiceItem = {
+  title: string;
+  description: string;
+  price: string;
+  features: string[];
+};
 
-export async function ServicesSection() {
-  let fromDb: Array<{
-    title: string;
-    description: string;
-    price: string;
-    features: string[];
-  }> = [];
-  try {
-    fromDb = await withTimeout(
-      prisma.servicePlan.findMany({
-        where: { isActive: true },
-        orderBy: [{ order: "asc" }, { createdAt: "desc" }]
-      }),
-      1500
-    );
-  } catch (error) {
-    console.error("Failed to load services from DB:", error);
-  }
-  const services =
-    fromDb.length > 0
-      ? fromDb.map((s) => ({
+export function ServicesSection() {
+  const [services, setServices] = useState<ServiceItem[]>(fallback);
+
+  useEffect(() => {
+    let mounted = true;
+    async function load() {
+      try {
+        const res = await fetch("/api/public/services", { cache: "no-store" });
+        const data = await res.json().catch(() => ({}));
+        if (!mounted || !res.ok || !data?.ok) return;
+        const items = Array.isArray(data.services) ? data.services : [];
+        if (items.length === 0) {
+          setServices(fallback);
+          return;
+        }
+        const mapped: ServiceItem[] = items.map((s: any) => ({
           title: s.title,
           description: s.description,
           price: s.price,
-          features: s.features
-        }))
-      : fallback;
+          features: Array.isArray(s.features) ? s.features : []
+        }));
+        setServices(mapped);
+      } catch {
+        // keep fallback cards when API is temporarily unavailable
+        if (mounted) setServices(fallback);
+      }
+    }
+    void load();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   return (
     <Container id="services">

@@ -1,6 +1,8 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { Container } from "@/components/ui";
-import { prisma } from "@/lib/db";
 import { MotionReveal } from "@/components/motion-reveal";
 
 type ProjectCardProps = {
@@ -11,15 +13,6 @@ type ProjectCardProps = {
   image: string;
   url: string;
 };
-
-function withTimeout<T>(promise: Promise<T>, timeoutMs: number) {
-  return Promise.race<T>([
-    promise,
-    new Promise<T>((_, reject) =>
-      setTimeout(() => reject(new Error(`Portfolio DB timeout after ${timeoutMs}ms`)), timeoutMs)
-    )
-  ]);
-}
 
 function normalizeProjectImageUrl(input: string) {
   const raw = input.trim().replace(/^[("'`\s]+|[)"'`\s]+$/g, "");
@@ -48,37 +41,49 @@ const fallback: ProjectCardProps[] = [
   }
 ];
 
-export async function PortfolioSection() {
-  let fromDb: Array<{
-    id: string;
-    title: string;
-    description: string;
-    technologies: string[];
-    images: string[];
-    liveUrl: string;
-  }> = [];
-  try {
-    fromDb = await withTimeout(
-      prisma.portfolioProject.findMany({
-        where: { isPublished: true },
-        orderBy: [{ order: "asc" }, { createdAt: "desc" }]
-      }),
-      1500
-    );
-  } catch (error) {
-    console.error("Failed to load portfolio projects from DB:", error);
-  }
-  const projects: ProjectCardProps[] =
-    fromDb.length > 0
-      ? fromDb.map((p) => ({
+type PublicProject = {
+  id: string;
+  title: string;
+  description: string;
+  technologies: string[];
+  images: string[];
+  liveUrl: string;
+};
+
+export function PortfolioSection() {
+  const [projects, setProjects] = useState<ProjectCardProps[]>(fallback);
+
+  useEffect(() => {
+    let mounted = true;
+    async function load() {
+      try {
+        const res = await fetch("/api/public/projects", { cache: "no-store" });
+        const data = await res.json().catch(() => ({}));
+        if (!mounted || !res.ok || !data?.ok) return;
+        const items: PublicProject[] = Array.isArray(data.projects) ? data.projects : [];
+        if (items.length === 0) {
+          setProjects(fallback);
+          return;
+        }
+        const mapped: ProjectCardProps[] = items.map((p) => ({
           id: p.id,
           title: p.title,
           description: p.description,
-          technologies: p.technologies,
-          image: normalizeProjectImageUrl(p.images?.[0] || "") || fallback[0].image,
-          url: p.liveUrl
-        }))
-      : fallback;
+          technologies: Array.isArray(p.technologies) ? p.technologies : [],
+          image: normalizeProjectImageUrl((Array.isArray(p.images) ? p.images[0] : "") || "") || fallback[0].image,
+          url: p.liveUrl || "#"
+        }));
+        setProjects(mapped);
+      } catch {
+        // keep fallback cards when API is temporarily unavailable
+        if (mounted) setProjects(fallback);
+      }
+    }
+    void load();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   return (
     <Container id="portfolio">
@@ -95,7 +100,7 @@ export async function PortfolioSection() {
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {projects.map((project, idx) => (
-            <MotionReveal key={project.title} delayMs={idx * 90}>
+            <MotionReveal key={`${project.id}-${project.title}`} delayMs={idx * 90}>
               <ProjectCard {...project} large={idx % 3 === 0} />
             </MotionReveal>
           ))}
