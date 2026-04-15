@@ -9,8 +9,16 @@ const defaultTitle = "Noro Studio | Interneto svetainių kūrimas";
 const defaultDescription =
   "Noro Studio kuria modernias interneto svetaines, portfolio ir verslo puslapius: dizainas, programavimas, SEO ir palaikymas.";
 
+function getMetadataBase() {
+  try {
+    return new URL(siteUrl);
+  } catch {
+    return new URL("http://localhost:3000");
+  }
+}
+
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: getMetadataBase(),
   applicationName: siteName,
   title: {
     default: defaultTitle,
