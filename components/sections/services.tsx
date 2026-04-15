@@ -41,6 +41,15 @@ const fallback = [
   }
 ];
 
+function withTimeout<T>(promise: Promise<T>, timeoutMs: number) {
+  return Promise.race<T>([
+    promise,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error(`Services DB timeout after ${timeoutMs}ms`)), timeoutMs)
+    )
+  ]);
+}
+
 export async function ServicesSection() {
   let fromDb: Array<{
     title: string;
@@ -49,10 +58,13 @@ export async function ServicesSection() {
     features: string[];
   }> = [];
   try {
-    fromDb = await prisma.servicePlan.findMany({
-      where: { isActive: true },
-      orderBy: [{ order: "asc" }, { createdAt: "desc" }]
-    });
+    fromDb = await withTimeout(
+      prisma.servicePlan.findMany({
+        where: { isActive: true },
+        orderBy: [{ order: "asc" }, { createdAt: "desc" }]
+      }),
+      1500
+    );
   } catch (error) {
     console.error("Failed to load services from DB:", error);
   }

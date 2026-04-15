@@ -12,6 +12,15 @@ type ProjectCardProps = {
   url: string;
 };
 
+function withTimeout<T>(promise: Promise<T>, timeoutMs: number) {
+  return Promise.race<T>([
+    promise,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error(`Portfolio DB timeout after ${timeoutMs}ms`)), timeoutMs)
+    )
+  ]);
+}
+
 function normalizeProjectImageUrl(input: string) {
   const raw = input.trim().replace(/^[("'`\s]+|[)"'`\s]+$/g, "");
   if (raw === "") return "";
@@ -49,10 +58,13 @@ export async function PortfolioSection() {
     liveUrl: string;
   }> = [];
   try {
-    fromDb = await prisma.portfolioProject.findMany({
-      where: { isPublished: true },
-      orderBy: [{ order: "asc" }, { createdAt: "desc" }]
-    });
+    fromDb = await withTimeout(
+      prisma.portfolioProject.findMany({
+        where: { isPublished: true },
+        orderBy: [{ order: "asc" }, { createdAt: "desc" }]
+      }),
+      1500
+    );
   } catch (error) {
     console.error("Failed to load portfolio projects from DB:", error);
   }
