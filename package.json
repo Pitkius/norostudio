@@ -6,7 +6,7 @@
     "prebuild": "node scripts/prebuild.mjs",
     "dev": "next dev",
     "build": "next build",
-    "start": "node scripts/start.cjs",
+    "start": "node server.cjs",
     "lint": "next lint",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
