@@ -6,8 +6,6 @@ import { LogoGallerySection } from "@/components/sections/logo-gallery";
 import { ContactSection } from "@/components/sections/contact";
 import { MainNav } from "@/components/sections/navbar";
 
-export const dynamic = "force-dynamic";
-
 export default function HomePage() {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
   const jsonLd = {
