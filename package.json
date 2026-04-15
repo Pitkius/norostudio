@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "prebuild": "prisma generate && prisma migrate deploy",
+    "prebuild": "prisma generate && prisma migrate deploy && node prisma/seed.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
