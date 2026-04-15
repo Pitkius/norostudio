@@ -12,6 +12,21 @@ type ProjectCardProps = {
   url: string;
 };
 
+function normalizeProjectImageUrl(input: string) {
+  const raw = input.trim().replace(/^[("'`\s]+|[)"'`\s]+$/g, "");
+  if (raw === "") return "";
+
+  // Handle common admin input variants and legacy file names.
+  if (raw.startsWith("/projects/suniukai-")) {
+    return raw.replace("/projects/suniukai-", "/projects/suneliu-motelis-");
+  }
+  const kirpyklaMatch = raw.match(/^\/projects\/kirpykla-(\d{2})\.(png|jpe?g|webp)$/i);
+  if (kirpyklaMatch) {
+    return `/projects/kirpykla${Number(kirpyklaMatch[1])}.${kirpyklaMatch[2]}`;
+  }
+  return raw;
+}
+
 const fallback: ProjectCardProps[] = [
   {
     id: "demo",
@@ -48,7 +63,7 @@ export async function PortfolioSection() {
           title: p.title,
           description: p.description,
           technologies: p.technologies,
-          image: p.images?.[0] || fallback[0].image,
+          image: normalizeProjectImageUrl(p.images?.[0] || "") || fallback[0].image,
           url: p.liveUrl
         }))
       : fallback;
@@ -107,7 +122,7 @@ function ProjectCard({
           ))}
         </div>
         <div className="space-y-2">
-          <h3 className="text-xl font-semibold text-white">{title}</h3>
+          <h3 className="min-h-[3.5rem] text-xl font-semibold text-white">{title}</h3>
           <p className="min-h-[72px] text-sm text-slate-200/90">{description}</p>
         </div>
         <div className="flex flex-wrap gap-3 pt-1">

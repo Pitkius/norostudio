@@ -3,6 +3,19 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { ProjectGallery } from "@/components/project-gallery";
 
+function normalizeProjectImageUrl(input: string) {
+  const raw = input.trim().replace(/^[("'`\s]+|[)"'`\s]+$/g, "");
+  if (raw === "") return "";
+  if (raw.startsWith("/projects/suniukai-")) {
+    return raw.replace("/projects/suniukai-", "/projects/suneliu-motelis-");
+  }
+  const kirpyklaMatch = raw.match(/^\/projects\/kirpykla-(\d{2})\.(png|jpe?g|webp)$/i);
+  if (kirpyklaMatch) {
+    return `/projects/kirpykla${Number(kirpyklaMatch[1])}.${kirpyklaMatch[2]}`;
+  }
+  return raw;
+}
+
 export async function generateMetadata({
   params
 }: {
@@ -31,7 +44,9 @@ export default async function ProjectPage({
 
   if (!project) notFound();
 
-  const images = project.images?.length ? project.images : [];
+  const images = project.images?.length
+    ? project.images.map((src) => normalizeProjectImageUrl(src)).filter(Boolean)
+    : [];
   const hasLiveUrl = project.liveUrl && project.liveUrl !== "#" && !project.liveUrl.startsWith("https://example");
 
   return (
