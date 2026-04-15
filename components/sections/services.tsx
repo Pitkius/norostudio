@@ -42,10 +42,20 @@ const fallback = [
 ];
 
 export async function ServicesSection() {
-  const fromDb = await prisma.servicePlan.findMany({
-    where: { isActive: true },
-    orderBy: [{ order: "asc" }, { createdAt: "desc" }]
-  });
+  let fromDb: Array<{
+    title: string;
+    description: string;
+    price: string;
+    features: string[];
+  }> = [];
+  try {
+    fromDb = await prisma.servicePlan.findMany({
+      where: { isActive: true },
+      orderBy: [{ order: "asc" }, { createdAt: "desc" }]
+    });
+  } catch (error) {
+    console.error("Failed to load services from DB:", error);
+  }
   const services =
     fromDb.length > 0
       ? fromDb.map((s) => ({

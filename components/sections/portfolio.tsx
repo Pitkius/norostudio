@@ -25,10 +25,22 @@ const fallback: ProjectCardProps[] = [
 ];
 
 export async function PortfolioSection() {
-  const fromDb = await prisma.portfolioProject.findMany({
-    where: { isPublished: true },
-    orderBy: [{ order: "asc" }, { createdAt: "desc" }]
-  });
+  let fromDb: Array<{
+    id: string;
+    title: string;
+    description: string;
+    technologies: string[];
+    images: string[];
+    liveUrl: string;
+  }> = [];
+  try {
+    fromDb = await prisma.portfolioProject.findMany({
+      where: { isPublished: true },
+      orderBy: [{ order: "asc" }, { createdAt: "desc" }]
+    });
+  } catch (error) {
+    console.error("Failed to load portfolio projects from DB:", error);
+  }
   const projects: ProjectCardProps[] =
     fromDb.length > 0
       ? fromDb.map((p) => ({
