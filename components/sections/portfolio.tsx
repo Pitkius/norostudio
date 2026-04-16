@@ -100,7 +100,7 @@ export function PortfolioSection() {
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {projects.map((project, idx) => (
-            <MotionReveal key={`${project.id}-${project.title}`} delayMs={idx * 90}>
+            <MotionReveal key={`${project.id}-${project.title}`} delayMs={idx * 90} className="h-full">
               <ProjectCard {...project} />
             </MotionReveal>
           ))}
@@ -121,7 +121,7 @@ function ProjectCard({
   const hasDetailPage = id !== "demo";
   const hasLiveSite = url && url !== "#" && !url.startsWith("https://example");
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-3xl border border-white/10 bg-slate-900/30 shadow-soft">
+    <article className="group flex h-full min-h-[46rem] flex-col overflow-hidden rounded-3xl border border-white/10 bg-slate-900/30 shadow-soft">
       <div className="relative h-64 w-full overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -137,9 +137,9 @@ function ProjectCard({
             <span key={tech} className="chip text-[10px]">{tech}</span>
           ))}
         </div>
-        <div className="space-y-2">
+        <div className="min-h-[15rem] space-y-2">
           <h3 className="min-h-[3.5rem] text-xl font-semibold text-white">{title}</h3>
-          <p className="min-h-[72px] text-sm text-slate-200/90">{description}</p>
+          <p className="min-h-[9.5rem] text-sm text-slate-200/90">{description}</p>
         </div>
         <div className="mt-auto flex flex-wrap gap-3 pt-1">
           {hasDetailPage && (
