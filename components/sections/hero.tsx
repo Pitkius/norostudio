@@ -25,13 +25,16 @@ export function HeroSection() {
                 </div>
 
                 <div className="space-y-3">
-                  <p className="text-sm text-indigo-200/90">Freelance Web Developer</p>
+                  <p className="text-sm text-indigo-200/90">
+                    Interneto svetainių kūrimas · UI/UX dizainas · SEO
+                  </p>
                   <h1 className="text-4xl font-semibold leading-tight sm:text-6xl">
-                    Kuriu <span className="gradient-text">premium</span> interneto patirtis.
+                    Modernios interneto svetainės, kurios generuoja klientus.
                   </h1>
                   <p className="max-w-2xl text-sm leading-relaxed text-slate-300 sm:text-base">
-                    Modernus dizainas, aiški architektūra ir greitas veikimas. Nuo įspūdingų portfolio
-                    iki verslo sistemų, kurios paverčia lankytojus klientais.
+                    Kuriu greitas ir konversijai paruoštas interneto svetaines verslams ir kūrėjams
+                    Lietuvoje – nuo asmeninių portfolio iki parduodančių verslo puslapių. Fokusas – aiškus
+                    dizainas, gera struktūra ir SEO, kad būtumėte lengvai randami „Google“.
                   </p>
                 </div>
 

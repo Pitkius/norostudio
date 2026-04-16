@@ -8,14 +8,15 @@ export function AboutSection() {
         <MotionReveal className="space-y-4">
           <h2 className="section-title">Apie mane ir Noro studiją</h2>
           <p className="section-subtitle">
-            Sveiki, mano vardas Pijus. Esu kūrėjas ir verslo entuziastas, įkūręs „Noro studiją“ -
-            kūrybinę erdvę, kur idėjos tampa realiais rezultatais. Mane visada traukė dizainas,
-            technologijos ir galimybė padėti verslams augti.
+            Sveiki, mano vardas Pijus. Esu web kūrėjas ir verslo entuziastas, įkūręs „Noro studiją“ –
+            studiją, kuri specializuojasi modernių interneto svetainių kūrime, portfolio ir verslo
+            puslapiuose mažoms įmonėms bei freelancer‘iams Lietuvoje.
           </p>
           <p className="section-subtitle">
-            Kiekvieną projektą kuriu individualiai: nuo svetainių ir vizualinio identiteto iki
-            socialinių tinklų turinio. Mano tikslas - kad jūsų verslas atrodytų profesionaliai,
-            išsiskirtų rinkoje ir pritrauktų daugiau klientų.
+            Kiekvieną projektą kuriu individualiai: nuo interneto svetainių ir vizualinio identiteto
+            iki aiškiai struktūruoto turinio ir SEO. Mano tikslas – kad jūsų verslas internete
+            atrodytų profesionaliai, būtų lengvai randamas „Google“ ir pritrauktų daugiau klientų iš
+            organinės paieškos.
           </p>
           <div className="grid gap-3 text-xs sm:grid-cols-2">
             <SkillPill title="Frontend" items={["React", "Next.js", "TypeScript", "Tailwind CSS"]} />
