@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { prisma } from "@/lib/db";
+import { prisma, withTimeout } from "@/lib/db";
 import { ProjectGallery } from "@/components/project-gallery";
 
 function normalizeProjectImageUrl(input: string) {
@@ -22,9 +22,13 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const project = await prisma.portfolioProject.findFirst({
-    where: { id, isPublished: true }
-  });
+  const project = await withTimeout(
+    prisma.portfolioProject.findFirst({
+      where: { id, isPublished: true }
+    }),
+    8000,
+    "project metadata query"
+  ).catch(() => null);
   if (!project) return { title: "Projektas nerastas" };
   return {
     title: `${project.title} | Noro Studio Portfolio`,
@@ -38,9 +42,13 @@ export default async function ProjectPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const project = await prisma.portfolioProject.findFirst({
-    where: { id, isPublished: true }
-  });
+  const project = await withTimeout(
+    prisma.portfolioProject.findFirst({
+      where: { id, isPublished: true }
+    }),
+    8000,
+    "project page query"
+  ).catch(() => null);
 
   if (!project) notFound();
 

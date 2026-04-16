@@ -15,3 +15,15 @@ if (process.env.NODE_ENV !== "production") {
   global.prisma = prisma;
 }
 
+export function withTimeout<T>(promise: Promise<T>, ms: number, label = "operation"): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_resolve, reject) => {
+      const id = setTimeout(() => {
+        clearTimeout(id);
+        reject(new Error(`${label} timed out after ${ms}ms`));
+      }, ms);
+    })
+  ]);
+}
+
