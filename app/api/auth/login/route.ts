@@ -7,14 +7,30 @@ import { HttpError, requireString } from "@/lib/validation";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const email = requireString(body?.email, "email", { min: 5, max: 200 }).toLowerCase();
+    const email = requireString(body?.email, "email", { min: 5, max: 200 }).trim().toLowerCase();
     const password = requireString(body?.password, "password", { min: 6, max: 200 });
 
-    const user = await prisma.adminUser.findUnique({ where: { email } });
-    if (!user) throw new HttpError(401, "Neteisingi prisijungimo duomenys");
+    const envEmail = (process.env.ADMIN_EMAIL || "").trim().toLowerCase();
+    const envPassword = process.env.ADMIN_PASSWORD || "";
+    let user = await prisma.adminUser.findUnique({ where: { email } });
 
-    const ok = await bcrypt.compare(password, user.passwordHash);
-    if (!ok) throw new HttpError(401, "Neteisingi prisijungimo duomenys");
+    if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
+      const canUseEnvFallback =
+        email === envEmail &&
+        envPassword.length >= 6 &&
+        password === envPassword;
+
+      if (!canUseEnvFallback) {
+        throw new HttpError(401, "Neteisingi prisijungimo duomenys");
+      }
+
+      const passwordHash = await bcrypt.hash(envPassword, 10);
+      user = await prisma.adminUser.upsert({
+        where: { email: envEmail },
+        update: { passwordHash },
+        create: { email: envEmail, passwordHash }
+      });
+    }
 
     const token = signAdminJwt({ sub: user.id, email: user.email });
     const res = NextResponse.json({ ok: true });

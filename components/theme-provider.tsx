@@ -10,7 +10,6 @@ type ThemeContextType = {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [mounted, setMounted] = useState(false);
   const [theme, setTheme] = useState<"light" | "dark">("dark");
 
   useEffect(() => {
@@ -21,11 +20,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)").matches;
       setTheme(prefersDark ? "dark" : "light");
     }
-    setMounted(true);
   }, []);
 
   useEffect(() => {
-    if (!mounted) return;
     const root = document.documentElement;
     if (theme === "dark") {
       root.classList.add("dark");
@@ -33,11 +30,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       root.classList.remove("dark");
     }
     window.localStorage.setItem("theme", theme);
-  }, [theme, mounted]);
-
-  if (!mounted) {
-    return null;
-  }
+  }, [theme]);
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme }}>
