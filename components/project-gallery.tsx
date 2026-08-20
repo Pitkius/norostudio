@@ -17,13 +17,13 @@ export function ProjectGallery({ images, title }: ProjectGalleryProps) {
 
   return (
     <>
-      <div className="grid gap-6 sm:grid-cols-2">
+      <div className="grid gap-5 sm:grid-cols-2">
         {images.map((src, i) => (
           <button
             type="button"
             key={i}
             onClick={() => open(i)}
-            className="relative overflow-hidden rounded-2xl border border-white/10 bg-slate-900/50 text-left transition hover:border-white/20 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+            className="relative overflow-hidden border border-ink/10 bg-paper-deep text-left transition hover:border-ink/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-moss"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -42,20 +42,17 @@ export function ProjectGallery({ images, title }: ProjectGalleryProps) {
           role="dialog"
           aria-modal="true"
           aria-label="Nuotraukos peržiūra"
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-ink/85 p-4"
           onClick={close}
         >
           <button
             type="button"
             onClick={close}
-            className="absolute right-4 top-4 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/20"
+            className="absolute right-4 top-4 btn-outline border-paper-raised/30 py-2 text-sm text-paper-raised hover:bg-paper-raised/10"
           >
             Uždaryti
           </button>
-          <div
-            className="relative max-h-[90vh] max-w-4xl"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="relative max-h-[90vh] max-w-4xl" onClick={(e) => e.stopPropagation()}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={images[lightboxIndex]}

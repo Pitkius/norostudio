@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma, withTimeout } from "@/lib/db";
-import { ProjectGallery } from "@/components/project-gallery";
+import { asStringArray } from "@/lib/json-array";
+import { getProjectFeatures, getProjectScreens } from "@/lib/project-features";
 
 function normalizeProjectImageUrl(input: string) {
   const raw = input.trim().replace(/^[("'`\s]+|[)"'`\s]+$/g, "");
@@ -19,12 +20,11 @@ function normalizeProjectImageUrl(input: string) {
 export async function generateMetadata({
   params
 }: {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 }) {
-  const { id } = await params;
   const project = await withTimeout(
     prisma.portfolioProject.findFirst({
-      where: { id, isPublished: true }
+      where: { id: params.id, isPublished: true }
     }),
     8000,
     "project metadata query"
@@ -39,12 +39,11 @@ export async function generateMetadata({
 export default async function ProjectPage({
   params
 }: {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 }) {
-  const { id } = await params;
   const project = await withTimeout(
     prisma.portfolioProject.findFirst({
-      where: { id, isPublished: true }
+      where: { id: params.id, isPublished: true }
     }),
     8000,
     "project page query"
@@ -52,71 +51,93 @@ export default async function ProjectPage({
 
   if (!project) notFound();
 
-  const images = project.images?.length
-    ? project.images.map((src) => normalizeProjectImageUrl(src)).filter(Boolean)
-    : [];
-  const hasLiveUrl = project.liveUrl && project.liveUrl !== "#" && !project.liveUrl.startsWith("https://example");
+  const technologies = asStringArray(project.technologies);
+  const images = asStringArray(project.images)
+    .map((src) => normalizeProjectImageUrl(src))
+    .filter(Boolean);
+  const features = getProjectFeatures(project.title);
+  const screens = getProjectScreens(project.title, images);
 
   return (
-    <div className="min-h-screen bg-slate-950">
-      <header className="border-b border-white/10 bg-slate-950/80 backdrop-blur-xl">
-        <div className="container-main flex items-center justify-between py-4">
+    <div className="min-h-screen bg-paper">
+      <header className="border-b border-ink/10 bg-paper-raised/90 backdrop-blur-sm">
+        <div className="container-main flex items-center justify-between py-5">
           <Link
             href="/#portfolio"
-            className="text-sm font-medium text-slate-400 transition hover:text-white"
+            className="text-sm font-medium text-ink-mute transition hover:text-ink"
           >
             ← Atgal į portfolio
           </Link>
-          <Link href="/" className="text-sm font-semibold text-white">
+          <Link href="/" className="font-display text-base font-semibold text-ink">
             Noro Studio
           </Link>
         </div>
       </header>
 
       <main className="container-main py-12 sm:py-16">
-        <div className="mx-auto max-w-4xl">
-          <h1 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+        <div className="mx-auto max-w-5xl">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-copper">
+            Funkcionalumo galerija
+          </p>
+          <h1 className="mt-3 font-display text-3xl tracking-brand text-ink sm:text-5xl">
             {project.title}
           </h1>
-          <p className="mt-4 text-base leading-relaxed text-slate-300 sm:text-lg">
+          <p className="mt-5 max-w-2xl text-base leading-relaxed text-ink-mute sm:text-lg">
             {project.description}
           </p>
 
-          {project.technologies.length > 0 && (
-            <div className="mt-6 flex flex-wrap gap-2">
-              {project.technologies.map((tech) => (
-                <span
-                  key={tech}
-                  className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-slate-200"
-                >
-                  {tech}
-                </span>
-              ))}
-            </div>
-          )}
-
-          {hasLiveUrl && (
-            <a
-              href={project.liveUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-6 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-indigo-500 to-violet-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:from-indigo-400 hover:to-violet-400"
-            >
-              Atidaryti gyvai
-              <span aria-hidden>↗</span>
-            </a>
-          )}
-
-          {images.length > 0 ? (
-            <div className="mt-12 space-y-6">
-              <h2 className="text-lg font-semibold text-white">Galerija</h2>
-              <ProjectGallery images={images} title={project.title} />
-            </div>
-          ) : (
-            <p className="mt-12 text-sm text-slate-500">
-              Nuotraukų dar nėra. Pridėkite per admin → Projektai → Nuotraukos URL.
+          {technologies.length > 0 && (
+            <p className="mt-5 text-xs uppercase tracking-[0.16em] text-ink-mute">
+              {technologies.join(" · ")}
             </p>
           )}
+
+          <section className="mt-12 border-t border-ink/10 pt-10">
+            <h2 className="font-display text-2xl tracking-brand text-ink">Ką apima sistema</h2>
+            <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {features.map((item) => (
+                <li
+                  key={item}
+                  className="flex gap-3 border border-ink/10 bg-paper-raised px-4 py-3 text-sm text-ink-soft"
+                >
+                  <span className="mt-1 h-1.5 w-1.5 shrink-0 bg-copper" aria-hidden />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <section className="mt-14 space-y-14">
+            <h2 className="font-display text-2xl tracking-brand text-ink">Ekranai</h2>
+            {screens.map((screen) => (
+              <figure key={screen.src} className="space-y-4">
+                <div className="flex flex-wrap items-end justify-between gap-3 border-b border-ink/10 pb-3">
+                  <div>
+                    <p className="font-mono text-[11px] text-copper">{screen.label}</p>
+                    <p className="mt-1 text-sm text-ink-mute">{screen.blurb}</p>
+                  </div>
+                </div>
+                <div className="overflow-hidden border border-ink/10 bg-paper-deep">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={screen.src}
+                    alt={`${project.title} — ${screen.label}`}
+                    width={1600}
+                    height={900}
+                    className="h-auto w-full object-cover object-top"
+                    loading="lazy"
+                  />
+                </div>
+              </figure>
+            ))}
+          </section>
+
+          <div className="mt-16 border-t border-ink/10 pt-8">
+            <p className="text-sm text-ink-mute">Norite tokios sistemos savo verslui?</p>
+            <Link href="/#contact" className="btn-primary mt-4">
+              Pradėti projektą
+            </Link>
+          </div>
         </div>
       </main>
     </div>

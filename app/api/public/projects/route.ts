@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma, withTimeout } from "@/lib/db";
+import { asStringArray } from "@/lib/json-array";
 
 export const dynamic = "force-dynamic";
 
@@ -13,9 +14,15 @@ export async function GET() {
       8000,
       "projects query"
     );
-    return NextResponse.json({ ok: true, projects });
+    return NextResponse.json({
+      ok: true,
+      projects: projects.map((p) => ({
+        ...p,
+        technologies: asStringArray(p.technologies),
+        images: asStringArray(p.images)
+      }))
+    });
   } catch {
     return NextResponse.json({ ok: true, projects: [] });
   }
 }
-

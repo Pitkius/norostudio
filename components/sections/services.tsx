@@ -8,38 +8,23 @@ const fallback = [
   {
     title: "Paprasta svetainė (1 puslapio)",
     description:
-      "Puikus pasirinkimas, jei norite greitai turėti savo puslapį internete - paslaugai, asmeniniam brandui ar mažam verslui.",
+      "Greitas ir tvarkingas puslapis paslaugai, asmeniniam brandui ar mažam verslui.",
     price: "nuo 300 €",
-    features: [
-      "Tvarkingas ir modernus dizainas",
-      "Veikia telefone ir kompiuteryje",
-      "Pagrindinė informacija viename puslapyje",
-      "Svetainės paleidimas internete"
-    ]
+    features: ["Modernus dizainas", "Mobilus + desktop", "Viena aiški struktūra", "Paleidimas internete"]
   },
   {
     title: "Verslo svetainė",
     description:
-      "Skirta verslui, kuris nori atrodyti profesionaliai ir turėti daugiau informacijos klientams.",
+      "Keli puslapiai, kontaktų forma ir SEO pagrindai — kai reikia atrodyti solidžiai.",
     price: "nuo 500 €",
-    features: [
-      "Individualiai sukurtas dizainas",
-      "Keli puslapiai (apie mus, paslaugos, kontaktai)",
-      "Kontaktų forma klientams",
-      "SEO pagrindai ir papildomų funkcijų integracija"
-    ]
+    features: ["Individualus dizainas", "Keli puslapiai", "Kontaktų forma", "SEO pagrindai"]
   },
   {
-    title: "Web aplikacija (sistema)",
+    title: "Web aplikacija",
     description:
-      "Tinka, jei reikia ne tik svetainės, bet ir sistemos: registracijos, paskyrų, rezervacijų ar duomenų valdymo.",
+      "Kai reikia sistemos: paskyrų, rezervacijų ar duomenų valdymo, ne tik vitrinos.",
     price: "nuo 1000 €",
-    features: [
-      "Prisijungimo ir registracijos sistema",
-      "Vartotojų paskyros",
-      "Admin panelė valdymui",
-      "Rezervacijos ir duomenų valdymas"
-    ]
+    features: ["Prisijungimas", "Vartotojų paskyros", "Admin panelė", "Duomenų valdymas"]
   }
 ];
 
@@ -65,15 +50,15 @@ export function ServicesSection() {
           setServices(fallback);
           return;
         }
-        const mapped: ServiceItem[] = items.map((s: any) => ({
-          title: s.title,
-          description: s.description,
-          price: s.price,
-          features: Array.isArray(s.features) ? s.features : []
-        }));
-        setServices(mapped);
+        setServices(
+          items.map((s: any) => ({
+            title: s.title,
+            description: s.description,
+            price: s.price,
+            features: Array.isArray(s.features) ? s.features : []
+          }))
+        );
       } catch {
-        // keep fallback cards when API is temporarily unavailable
         if (mounted) setServices(fallback);
       }
     }
@@ -85,44 +70,35 @@ export function ServicesSection() {
 
   return (
     <Container id="services">
-      <div className="flex flex-col gap-10 lg:flex-row lg:items-start">
-        <MotionReveal className="max-w-md space-y-4">
-          <h2 className="section-title">Paslaugos ir kainos</h2>
+      <div className="space-y-12">
+        <MotionReveal className="max-w-2xl space-y-4">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-copper">Paslaugos</p>
+          <h2 className="section-title">Kainos ir planai</h2>
           <p className="section-subtitle">
-            Kiekvienas projektas yra skirtingas, todėl kainos gali keistis pagal jūsų poreikius.
-            Žemiau pateikti paprasti planai padės aiškiai suprasti, ką gaunate.
-          </p>
-          <p className="text-xs text-slate-400">
-            Jei nežinote, ko tiksliai reikia, parašykite - padėsiu išsirinkti tinkamiausią
-            variantą ir parengsiu individualų pasiūlymą pagal biudžetą.
+            Orientaciniai paketai — galutinė kaina priklauso nuo apimties. Nežinote, ko reikia?
+            Parašykite, pasiūlysiu tinkamiausią variantą.
           </p>
         </MotionReveal>
-        <div className="grid flex-1 gap-5 md:grid-cols-3">
+
+        <div className="divide-y divide-ink/10 border-y border-ink/10">
           {services.map((service, i) => (
-            <MotionReveal key={service.title} delayMs={i * 80}>
-              <article className="card flex h-full flex-col justify-between transition hover:-translate-y-1 hover:border-indigo-300/30">
-              <div className="space-y-2">
-                <h3 className="text-sm font-semibold text-white">
-                  {service.title}
-                </h3>
-                <p className="text-xs text-slate-300">
-                  {service.description}
-                </p>
-                <p className="mt-3 text-sm font-semibold text-indigo-300">
-                  {service.price}
-                </p>
-                <ul className="mt-3 space-y-1 text-xs text-slate-300">
+            <MotionReveal key={service.title} delayMs={i * 50}>
+              <article className="grid gap-6 py-9 md:grid-cols-[1.2fr_1fr_auto] md:items-start md:gap-10">
+                <div className="space-y-2">
+                  <h3 className="font-display text-2xl tracking-brand text-ink">{service.title}</h3>
+                  <p className="text-sm leading-relaxed text-ink-mute">{service.description}</p>
+                </div>
+                <ul className="space-y-1.5 text-sm text-ink-soft">
                   {service.features.map((item) => (
-                    <li key={item}>• {item}</li>
+                    <li key={item}>{item}</li>
                   ))}
                 </ul>
-              </div>
-              <a
-                href="#contact"
-                className="mt-4 inline-flex w-full items-center justify-center rounded-full border border-white/20 px-5 py-2 text-xs font-semibold text-slate-100 transition hover:border-indigo-300 hover:bg-indigo-500/20"
-              >
-                Gauti pasiūlymą
-              </a>
+                <div className="flex flex-col items-start gap-3 md:items-end">
+                  <p className="font-display text-xl text-moss">{service.price}</p>
+                  <a href="#contact" className="btn-outline py-2 text-xs">
+                    Gauti pasiūlymą
+                  </a>
+                </div>
               </article>
             </MotionReveal>
           ))}
@@ -131,4 +107,3 @@ export function ServicesSection() {
     </Container>
   );
 }
-

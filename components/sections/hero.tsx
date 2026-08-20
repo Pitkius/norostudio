@@ -1,52 +1,48 @@
-import { MotionReveal } from "@/components/motion-reveal";
-
 export function HeroSection() {
   return (
-    <section id="home" className="relative flex min-h-[92vh] items-center overflow-hidden text-slate-100">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_25%_20%,rgba(99,102,241,0.35),transparent_48%),radial-gradient(circle_at_85%_30%,rgba(236,72,153,0.14),transparent_35%)]" />
-      <div className="container-main relative">
-        <MotionReveal>
-          <div className="relative overflow-hidden rounded-[2rem] border border-white/15 bg-slate-900/40 p-8 shadow-soft backdrop-blur-2xl sm:p-12">
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-300/60 to-transparent" />
-            <div>
-              <div className="space-y-7">
-                <div className="inline-flex items-center gap-4 rounded-full border border-white/15 bg-white/5 px-3 py-2">
-                  <div className="h-11 w-11 overflow-hidden rounded-full bg-white">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src="/logo/Logo.svg"
-                      alt="Noro Studio"
-                      width={44}
-                      height={44}
-                      className="h-full w-full  object-cover object-center"
-                    />
-                  </div>
-                  <span className="text-[11px] uppercase tracking-[0.25em] text-slate-300">Noro Studio</span>
-                </div>
+    <section id="home" className="relative overflow-hidden bg-paper-raised">
+      <div className="absolute left-0 top-0 h-full w-1.5 bg-copper sm:w-2" aria-hidden />
 
-                <div className="space-y-3">
-                  <p className="text-sm text-indigo-200/90">
-                    Interneto svetainių kūrimas · UI/UX dizainas · SEO
-                  </p>
-                  <h1 className="text-4xl font-semibold leading-tight sm:text-6xl">
-                    Modernios interneto svetainės, kurios generuoja klientus.
-                  </h1>
-                  <p className="max-w-2xl text-sm leading-relaxed text-slate-300 sm:text-base">
-                    Kuriu greitas ir konversijai paruoštas interneto svetaines verslams ir kūrėjams
-                    Lietuvoje – nuo asmeninių portfolio iki parduodančių verslo puslapių. Fokusas – aiškus
-                    dizainas, gera struktūra ir SEO, kad būtumėte lengvai randami „Google“.
-                  </p>
-                </div>
-
-                <div className="flex flex-wrap gap-3">
-                  <a className="btn-primary" href="#portfolio">Peržiūrėti projektus</a>
-                  <a className="btn-outline" href="#contact">Pradėti projektą</a>
-                </div>
-              </div>
-
-            </div>
+      <div className="container-main flex min-h-[calc(100svh-4.5rem)] flex-col justify-between gap-16 py-14 sm:py-16 lg:py-20">
+        <div className="max-w-4xl pt-4">
+          <p className="hero-copy text-[11px] font-semibold uppercase tracking-[0.26em] text-copper">
+            Vilnius · web studio
+          </p>
+          <h1 className="hero-copy-delay mt-5 font-display text-[clamp(3.6rem,12vw,7.5rem)] leading-[0.88] tracking-brand text-ink">
+            Noro Studio
+          </h1>
+          <p className="hero-copy-late mt-7 max-w-lg text-lg leading-relaxed text-ink-mute">
+            Svetainės su charakteriu — dizainas, kodas ir SEO mažoms įmonėms Lietuvoje.
+          </p>
+          <div className="hero-copy-late mt-8 flex flex-wrap gap-3">
+            <a className="btn-primary" href="#portfolio">
+              Žiūrėti darbus
+            </a>
+            <a className="btn-outline" href="#contact">
+              Pradėti projektą
+            </a>
           </div>
-        </MotionReveal>
+        </div>
+
+        <div className="hero-copy-late border-t border-ink/15 pt-8">
+          <p className="mb-6 text-[11px] font-semibold uppercase tracking-[0.24em] text-copper">
+            Ką kuriame
+          </p>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+            {[
+              ["01", "Dizainas", "Aiški struktūra ir vizualas"],
+              ["02", "Kodas", "Greitas Next.js frontendas"],
+              ["03", "SEO", "Kad rastų Google"],
+              ["04", "Sistemos", "Rezervacijos ir admin"]
+            ].map(([num, title, text]) => (
+              <div key={num} className="border-l border-copper/50 pl-4">
+                <p className="font-mono text-[11px] text-copper">{num}</p>
+                <p className="mt-2 font-display text-2xl tracking-brand text-ink">{title}</p>
+                <p className="mt-1 text-sm text-ink-mute">{text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );

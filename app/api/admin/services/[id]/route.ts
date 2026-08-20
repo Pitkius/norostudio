@@ -2,15 +2,17 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/admin-only";
 import { HttpError, optionalString, requireStringArray } from "@/lib/validation";
+import { asStringArray } from "@/lib/json-array";
 
 export async function PUT(req: Request, { params }: { params: { id: string } }) {
   try {
     requireAdmin();
     const body = await req.json();
-    const data: any = {};
+    const data: Record<string, unknown> = {};
 
     if (body?.title !== undefined) data.title = optionalString(body.title, "title", { max: 120 });
-    if (body?.description !== undefined) data.description = optionalString(body.description, "description", { max: 4000 });
+    if (body?.description !== undefined)
+      data.description = optionalString(body.description, "description", { max: 4000 });
     if (body?.price !== undefined) data.price = optionalString(body.price, "price", { max: 120 });
     if (body?.features !== undefined)
       data.features = requireStringArray(body.features, "features", { maxItems: 30, maxLen: 80 });
@@ -18,7 +20,10 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     if (body?.isActive !== undefined) data.isActive = !!body.isActive;
 
     const service = await prisma.servicePlan.update({ where: { id: params.id }, data });
-    return NextResponse.json({ ok: true, service });
+    return NextResponse.json({
+      ok: true,
+      service: { ...service, features: asStringArray(service.features) }
+    });
   } catch (err: any) {
     const status = err instanceof HttpError ? err.status : 500;
     const message = err instanceof HttpError ? err.message : "Server error";
@@ -37,4 +42,3 @@ export async function DELETE(_req: Request, { params }: { params: { id: string }
     return NextResponse.json({ ok: false, error: message }, { status });
   }
 }
-

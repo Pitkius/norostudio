@@ -1,7 +1,20 @@
 import type { Metadata } from "next";
+import { Instrument_Serif, Public_Sans } from "next/font/google";
 import "./globals.css";
 import { ReactNode } from "react";
-import { ThemeProvider } from "@/components/theme-provider";
+
+const display = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-display",
+  display: "swap"
+});
+
+const sans = Public_Sans({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-sans",
+  display: "swap"
+});
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 const siteName = "Noro Studio";
@@ -78,13 +91,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="lt" suppressHydrationWarning>
-      <body className="min-h-screen bg-background-light text-foreground-light antialiased transition-colors duration-300 dark:bg-background-dark dark:text-foreground-dark">
-        <ThemeProvider>
-          {children}
-        </ThemeProvider>
-      </body>
+    <html lang="lt" className={`${display.variable} ${sans.variable}`}>
+      <body className="min-h-screen font-sans text-ink antialiased">{children}</body>
     </html>
   );
 }
-

@@ -32,10 +32,14 @@ export function requireStringArray(value: unknown, field: string, opts?: { maxIt
 
 export function requireUrl(value: unknown, field: string) {
   const s = requireString(value, field, { min: 1, max: 2048 });
+  let url: URL;
   try {
-    new URL(s);
+    url = new URL(s);
   } catch {
     throw new HttpError(400, `Field '${field}' must be a valid URL`);
+  }
+  if (url.protocol !== "http:" && url.protocol !== "https:") {
+    throw new HttpError(400, `Field '${field}' must be an http(s) URL`);
   }
   return s;
 }

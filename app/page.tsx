@@ -15,12 +15,7 @@ export default function HomePage() {
         "@type": "WebSite",
         name: "Noro Studio",
         url: siteUrl,
-        inLanguage: "lt-LT",
-        potentialAction: {
-          "@type": "SearchAction",
-          target: `${siteUrl}/?q={search_term_string}`,
-          "query-input": "required name=search_term_string"
-        }
+        inLanguage: "lt-LT"
       },
       {
         "@type": "ProfessionalService",
@@ -56,15 +51,22 @@ export default function HomePage() {
         <LogoGallerySection />
         <ContactSection />
       </main>
-      <footer className="border-t border-white/10 py-8 text-center text-xs text-slate-400">
-        <div className="container-main flex flex-col items-center justify-between gap-3 sm:flex-row">
-          <span>© {new Date().getFullYear()} Noro Studio. Visos teisės saugomos.</span>
-          <span className="text-slate-500">
-            Sukurta su Next.js & Tailwind CSS
-          </span>
+      <footer className="border-t border-ink/10 bg-ink text-paper-raised">
+        <div className="container-main flex flex-col gap-6 py-12 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="font-display text-3xl tracking-brand">Noro Studio</p>
+            <p className="mt-2 text-sm text-paper-raised/60">Svetainės su charakteriu.</p>
+          </div>
+          <div className="flex flex-col gap-2 text-sm sm:items-end">
+            <a href="#contact" className="text-copper-soft hover:text-copper">
+              Pradėti projektą →
+            </a>
+            <span className="text-paper-raised/45">
+              © {new Date().getFullYear()} Visos teisės saugomos.
+            </span>
+          </div>
         </div>
       </footer>
     </div>
   );
 }
-

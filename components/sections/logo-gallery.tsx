@@ -37,12 +37,11 @@ export async function LogoGallerySection() {
 
   return (
     <Container id="logos">
-      <div className="space-y-10">
-        <MotionReveal>
-          <div className="space-y-3">
-            <h2 className="section-title">Logotipų galerija</h2>
-            <p className="section-subtitle">Pavyzdiniai logotipai</p>
-          </div>
+      <div className="space-y-12">
+        <MotionReveal className="max-w-2xl space-y-4">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-copper">Identitetas</p>
+          <h2 className="section-title">Logotipų galerija</h2>
+          <p className="section-subtitle">Pavyzdiniai ženklai ir markės.</p>
         </MotionReveal>
 
         <MotionReveal>

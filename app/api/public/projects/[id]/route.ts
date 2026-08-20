@@ -1,17 +1,17 @@
 import { NextResponse } from "next/server";
 import { prisma, withTimeout } from "@/lib/db";
+import { asStringArray } from "@/lib/json-array";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(
   _req: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await params;
     const project = await withTimeout(
       prisma.portfolioProject.findFirst({
-        where: { id, isPublished: true }
+        where: { id: params.id, isPublished: true }
       }),
       8000,
       "project query"
@@ -19,7 +19,14 @@ export async function GET(
     if (!project) {
       return NextResponse.json({ ok: false, error: "Not found" }, { status: 404 });
     }
-    return NextResponse.json({ ok: true, project });
+    return NextResponse.json({
+      ok: true,
+      project: {
+        ...project,
+        technologies: asStringArray(project.technologies),
+        images: asStringArray(project.images)
+      }
+    });
   } catch {
     return NextResponse.json({ ok: false, error: "Server error" }, { status: 500 });
   }

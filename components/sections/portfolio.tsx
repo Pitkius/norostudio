@@ -17,8 +17,6 @@ type ProjectCardProps = {
 function normalizeProjectImageUrl(input: string) {
   const raw = input.trim().replace(/^[("'`\s]+|[)"'`\s]+$/g, "");
   if (raw === "") return "";
-
-  // Handle common admin input variants and legacy file names.
   if (raw.startsWith("/projects/suniukai-")) {
     return raw.replace("/projects/suniukai-", "/projects/suneliu-motelis-");
   }
@@ -32,12 +30,11 @@ function normalizeProjectImageUrl(input: string) {
 const fallback: ProjectCardProps[] = [
   {
     id: "demo",
-    title: "SaaS Analytics Dashboard",
-    description: "Interaktyvi administravimo panelė su realaus laiko grafika ir ataskaitomis.",
-    technologies: ["Next.js", "TypeScript", "Tailwind CSS", "PostgreSQL"],
-    image:
-      "https://images.pexels.com/photos/1181467/pexels-photo-1181467.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    url: "https://example-saas-app.vercel.app"
+    title: "Pavyzdinis projektas",
+    description: "Čia atsiras jūsų publikuoti portfolio darbai iš admin panelės.",
+    technologies: ["Next.js", "TypeScript"],
+    image: "/projects/motel-mockup-booking.png",
+    url: "#"
   }
 ];
 
@@ -70,12 +67,13 @@ export function PortfolioSection() {
           title: p.title,
           description: p.description,
           technologies: Array.isArray(p.technologies) ? p.technologies : [],
-          image: normalizeProjectImageUrl((Array.isArray(p.images) ? p.images[0] : "") || "") || fallback[0].image,
+          image:
+            normalizeProjectImageUrl((Array.isArray(p.images) ? p.images[0] : "") || "") ||
+            fallback[0].image,
           url: p.liveUrl || "#"
         }));
         setProjects(mapped);
       } catch {
-        // keep fallback cards when API is temporarily unavailable
         if (mounted) setProjects(fallback);
       }
     }
@@ -87,21 +85,19 @@ export function PortfolioSection() {
 
   return (
     <Container id="portfolio">
-      <div className="space-y-10">
-        <MotionReveal>
-          <div className="space-y-3">
-            <h2 className="section-title">Portfolio</h2>
-            <p className="section-subtitle">
-              Atrinkti projektai su moderniu UI/UX, orientuoti į konversiją, našumą ir premium
-              vizualiką.
-            </p>
-          </div>
+      <div className="space-y-14">
+        <MotionReveal className="max-w-2xl space-y-4">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-copper">Portfolio</p>
+          <h2 className="section-title">Atrinkti darbai</h2>
+          <p className="section-subtitle">
+            Spauskite projektą — atsidarys galerija su ekranais ir funkcionalumu.
+          </p>
         </MotionReveal>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="space-y-16">
           {projects.map((project, idx) => (
-            <MotionReveal key={`${project.id}-${project.title}`} delayMs={idx * 90} className="h-full">
-              <ProjectCard {...project} />
+            <MotionReveal key={`${project.id}-${project.title}`} delayMs={idx * 60}>
+              <ProjectRow {...project} reverse={idx % 2 === 1} />
             </MotionReveal>
           ))}
         </div>
@@ -110,65 +106,69 @@ export function PortfolioSection() {
   );
 }
 
-function ProjectCard({
+function ProjectRow({
   id,
   title,
   description,
   technologies,
   image,
-  url
-}: ProjectCardProps) {
-  const hasDetailPage = id !== "demo";
-  const hasLiveSite = url && url !== "#" && !url.startsWith("https://example");
+  reverse
+}: ProjectCardProps & { reverse?: boolean }) {
+  const galleryHref = id !== "demo" ? `/projects/${id}` : undefined;
+
+  const media = (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={image}
+      alt={title}
+      width={1280}
+      height={800}
+      className="aspect-[16/10] h-auto w-full object-cover object-top transition duration-500 group-hover:scale-[1.015]"
+      loading="lazy"
+      decoding="async"
+    />
+  );
+
   return (
-    <article className="group flex h-full min-h-[46rem] flex-col overflow-hidden rounded-3xl border border-white/10 bg-slate-900/30 shadow-soft">
-      <div className="relative h-64 w-full overflow-hidden">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={image}
-          alt={title}
-          className="h-full w-full object-cover transition duration-700 group-hover:scale-110"
-          loading="lazy"
-        />
+    <article
+      className={`grid items-center gap-8 lg:grid-cols-2 lg:gap-12 ${
+        reverse ? "lg:[&>div:first-child]:order-2" : ""
+      }`}
+    >
+      <div className="group overflow-hidden bg-paper-deep">
+        {galleryHref ? (
+          <Link href={galleryHref} aria-label={`Atidaryti ${title} galeriją`}>
+            {media}
+          </Link>
+        ) : (
+          media
+        )}
       </div>
-      <div className="flex flex-1 flex-col space-y-4 p-5 sm:p-6">
-        <div className="flex flex-wrap gap-1.5">
-          {technologies.slice(0, 4).map((tech) => (
-            <span key={tech} className="chip text-[10px]">{tech}</span>
-          ))}
-        </div>
-        <div className="min-h-[15rem] space-y-2">
-          <h3 className="min-h-[3.5rem] text-xl font-semibold text-white">{title}</h3>
-          <p className="min-h-[9.5rem] text-sm text-slate-200/90">{description}</p>
-        </div>
-        <div className="mt-auto flex flex-wrap gap-3 pt-1">
-          {hasDetailPage && (
-            <Link
-              href={`/projects/${id}`}
-              className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-semibold text-white transition group-hover:translate-x-1 group-hover:border-indigo-300/80 group-hover:bg-indigo-500/25"
-            >
-              Detaliau ir galerija
-              <span>→</span>
+      <div className="space-y-4">
+        {technologies.length > 0 && (
+          <p className="text-xs uppercase tracking-[0.16em] text-ink-mute">
+            {technologies.slice(0, 4).join(" · ")}
+          </p>
+        )}
+        <h3 className="font-display text-3xl tracking-brand text-ink sm:text-4xl">
+          {galleryHref ? (
+            <Link href={galleryHref} className="hover:text-moss">
+              {title}
             </Link>
+          ) : (
+            title
           )}
-          {hasLiveSite && (
-            <a
-              href={url}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 rounded-full border border-white/20 px-4 py-2 text-xs font-semibold text-slate-200 transition hover:border-indigo-300/80 hover:text-white"
-            >
-              Atidaryti svetainę ↗
-            </a>
-          )}
-          {!hasDetailPage && !hasLiveSite && (
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 px-4 py-2 text-xs font-semibold text-slate-400">
-              Demo projektas
-            </span>
-          )}
-        </div>
+        </h3>
+        <p className="max-w-md text-base leading-relaxed text-ink-mute">{description}</p>
+        {galleryHref && (
+          <Link
+            href={galleryHref}
+            className="inline-flex text-sm font-semibold text-moss underline-offset-4 hover:underline"
+          >
+            Atidaryti funkcionalumo galeriją →
+          </Link>
+        )}
       </div>
     </article>
   );
 }
-

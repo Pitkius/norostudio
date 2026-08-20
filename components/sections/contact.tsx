@@ -40,98 +40,86 @@ export function ContactSection() {
 
   return (
     <Container id="contact">
-      <div className="grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:items-start">
+      <div className="grid gap-12 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-start lg:gap-16">
         <MotionReveal className="space-y-4">
-          <h2 className="section-title">
-            Papasakokite apie savo projektą
-          </h2>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-copper">Kontaktai</p>
+          <h2 className="section-title">Papasakokite apie projektą</h2>
           <p className="section-subtitle">
-            Papasakokite keliais sakiniais, ko jums reikia, koks biudžetas ir terminas. Atsakysiu
-            su pasiūlymu ir idėjomis, kaip geriausiai įgyvendinti jūsų projektą.
-          </p>
-          <p className="text-xs text-slate-400">
-            Visi užklausos duomenys bus išsaugoti duomenų bazėje, kad galėčiau sekti projektus ir
-            pasiūlymus admin panelėje.
+            Trumpai apie poreikius, biudžetą ir terminą — atsakysiu su pasiūlymu ir
+            konkrečiomis idėjomis.
           </p>
         </MotionReveal>
-        <MotionReveal delayMs={140}>
-        <form onSubmit={handleSubmit} className="card space-y-4">
-          <div className="grid gap-3 sm:grid-cols-2">
+
+        <MotionReveal delayMs={100}>
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-4 border border-ink/10 bg-paper-raised p-6 sm:p-8"
+          >
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <label className="mb-1.5 block text-xs font-semibold text-ink">Vardas</label>
+                <Input
+                  required
+                  value={form.name}
+                  onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                  placeholder="Jūsų vardas"
+                />
+              </div>
+              <div>
+                <label className="mb-1.5 block text-xs font-semibold text-ink">El. paštas</label>
+                <Input
+                  type="email"
+                  required
+                  value={form.email}
+                  onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+                  placeholder="jus@example.com"
+                />
+              </div>
+            </div>
             <div>
-              <label className="mb-1 block text-xs font-medium text-slate-300">
-                Vardas
+              <label className="mb-1.5 block text-xs font-semibold text-ink">
+                Projekto aprašymas
               </label>
-              <Input
+              <Textarea
                 required
-                value={form.name}
-                onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                placeholder="Jūsų vardas"
+                rows={4}
+                value={form.description}
+                onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+                placeholder="Ko reikia: svetainė, sistema, logotipas…"
               />
             </div>
-            <div>
-              <label className="mb-1 block text-xs font-medium text-slate-300">
-                El. paštas
-              </label>
-              <Input
-                type="email"
-                required
-                value={form.email}
-                onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-                placeholder="jus@example.com"
-              />
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <label className="mb-1.5 block text-xs font-semibold text-ink">
+                  Biudžetas (apytiksliai)
+                </label>
+                <Input
+                  value={form.budget}
+                  onChange={(e) => setForm((f) => ({ ...f, budget: e.target.value }))}
+                  placeholder="pvz. 1500 €"
+                />
+              </div>
+              <div>
+                <label className="mb-1.5 block text-xs font-semibold text-ink">Terminas</label>
+                <Input
+                  value={form.deadline}
+                  onChange={(e) => setForm((f) => ({ ...f, deadline: e.target.value }))}
+                  placeholder="pvz. iki 2026-06"
+                />
+              </div>
             </div>
-          </div>
-          <div>
-            <label className="mb-1 block text-xs font-medium text-slate-300">
-              Projekto aprašymas
-            </label>
-            <Textarea
-              required
-              rows={4}
-              value={form.description}
-              onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
-              placeholder="Trumpai apibūdinkite, kokios svetainės ar sistemos jums reikia."
-            />
-          </div>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div>
-              <label className="mb-1 block text-xs font-medium text-slate-300">
-                Biudžetas (apytiksliai)
-              </label>
-              <Input
-                value={form.budget}
-                onChange={(e) => setForm((f) => ({ ...f, budget: e.target.value }))}
-                placeholder="pvz. 1500 €"
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-xs font-medium text-slate-300">
-                Terminas
-              </label>
-              <Input
-                value={form.deadline}
-                onChange={(e) => setForm((f) => ({ ...f, deadline: e.target.value }))}
-                placeholder="pvz. iki 2026-06"
-              />
-            </div>
-          </div>
-          <Button type="submit" loading={status === "submitting"} className="w-full text-xs">
-            Siųsti užklausą
-          </Button>
-          {status === "success" && (
-            <p className="text-xs text-emerald-300">
-              Ačiū! Jūsų užklausa gauta – netrukus susisieksiu.
-            </p>
-          )}
-          {status === "error" && (
-            <p className="text-xs text-rose-300">
-              Nepavyko išsiųsti užklausos. Bandykite dar kartą.
-            </p>
-          )}
-        </form>
+            <Button type="submit" loading={status === "submitting"} className="w-full text-sm">
+              Siųsti užklausą
+            </Button>
+            {status === "success" && (
+              <p className="text-sm text-moss">Ačiū! Užklausa gauta — netrukus susisieksiu.</p>
+            )}
+            {status === "error" && (
+              <p className="text-sm text-red-700">Nepavyko išsiųsti. Bandykite dar kartą.</p>
+            )}
+          </form>
         </MotionReveal>
       </div>
     </Container>
   );
 }
-

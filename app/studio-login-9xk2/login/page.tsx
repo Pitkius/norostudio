@@ -30,29 +30,33 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="container-main flex min-h-[calc(100vh-0px)] items-center justify-center py-16">
-      <form onSubmit={onSubmit} className="card w-full max-w-sm space-y-4">
+    <div className="container-main flex min-h-screen items-center justify-center py-16">
+      <form
+        onSubmit={onSubmit}
+        className="w-full max-w-sm space-y-4 border border-ink/10 bg-paper-raised p-6 sm:p-8"
+      >
         <div className="space-y-1">
-          <h1 className="text-lg font-semibold text-slate-900 dark:text-slate-50">Admin prisijungimas</h1>
-          <p className="text-xs text-slate-600 dark:text-slate-300">Prisijunkite, kad valdytumėte užklausas ir turinį.</p>
+          <h1 className="font-display text-xl font-medium text-ink">Admin prisijungimas</h1>
+          <p className="text-sm text-ink-mute">Valdykite užklausas ir turinį.</p>
         </div>
         <div className="space-y-2">
-          <label className="block text-xs font-medium text-slate-600 dark:text-slate-300">El. paštas</label>
+          <label className="block text-xs font-semibold text-ink">El. paštas</label>
           <Input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required />
         </div>
         <div className="space-y-2">
-          <label className="block text-xs font-medium text-slate-600 dark:text-slate-300">Slaptažodis</label>
-          <Input value={password} onChange={(e) => setPassword(e.target.value)} type="password" required />
+          <label className="block text-xs font-semibold text-ink">Slaptažodis</label>
+          <Input
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            type="password"
+            required
+          />
         </div>
-        <Button type="submit" loading={loading} className="w-full text-xs">
+        <Button type="submit" loading={loading} className="w-full text-sm">
           Prisijungti
         </Button>
-        {error && <p className="text-xs text-rose-600 dark:text-rose-400">{error}</p>}
-        <p className="text-[11px] text-slate-500 dark:text-slate-400">
-          Pirmam kartui susikurkite admin vartotoją per `npm run prisma:seed`.
-        </p>
+        {error && <p className="text-sm text-red-700">{error}</p>}
       </form>
     </div>
   );
 }
-

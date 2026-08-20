@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -19,9 +19,9 @@ model PortfolioProject {
   id           String   @id @default(cuid())
   title        String
   description  String
-  technologies String[] @default([])
+  technologies Json     @default("[]")
   liveUrl      String
-  images       String[] @default([])
+  images       Json     @default("[]")
   order        Int      @default(0)
   isPublished  Boolean  @default(true)
   createdAt    DateTime @default(now())
@@ -33,7 +33,7 @@ model ServicePlan {
   title       String
   description String
   price       String
-  features    String[] @default([])
+  features    Json     @default("[]")
   order       Int      @default(0)
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
@@ -41,14 +41,14 @@ model ServicePlan {
 }
 
 model Inquiry {
-  id          String   @id @default(cuid())
+  id          String        @id @default(cuid())
   name        String
   email       String
   description String
   budget      String?
   deadline    String?
   status      InquiryStatus @default(NEW)
-  createdAt   DateTime @default(now())
+  createdAt   DateTime      @default(now())
 }
 
 enum InquiryStatus {
@@ -56,4 +56,3 @@ enum InquiryStatus {
   IN_PROGRESS
   DONE
 }
-

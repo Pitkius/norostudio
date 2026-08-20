@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/admin-only";
 import { HttpError, requireString, requireStringArray } from "@/lib/validation";
+import { asStringArray } from "@/lib/json-array";
 
 export async function GET() {
   try {
@@ -9,7 +10,13 @@ export async function GET() {
     const services = await prisma.servicePlan.findMany({
       orderBy: [{ order: "asc" }, { createdAt: "desc" }]
     });
-    return NextResponse.json({ ok: true, services });
+    return NextResponse.json({
+      ok: true,
+      services: services.map((s) => ({
+        ...s,
+        features: asStringArray(s.features)
+      }))
+    });
   } catch (err: any) {
     const status = err instanceof HttpError ? err.status : 500;
     const message = err instanceof HttpError ? err.message : "Server error";
@@ -31,11 +38,16 @@ export async function POST(req: Request) {
     const service = await prisma.servicePlan.create({
       data: { title, description, price, features, order, isActive }
     });
-    return NextResponse.json({ ok: true, service }, { status: 201 });
+    return NextResponse.json(
+      {
+        ok: true,
+        service: { ...service, features: asStringArray(service.features) }
+      },
+      { status: 201 }
+    );
   } catch (err: any) {
     const status = err instanceof HttpError ? err.status : 500;
     const message = err instanceof HttpError ? err.message : "Server error";
     return NextResponse.json({ ok: false, error: message }, { status });
   }
 }
-
