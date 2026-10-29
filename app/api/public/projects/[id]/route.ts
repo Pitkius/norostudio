@@ -6,12 +6,13 @@ export const dynamic = "force-dynamic";
 
 export async function GET(
   _req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const project = await withTimeout(
       prisma.portfolioProject.findFirst({
-        where: { id: params.id, isPublished: true }
+        where: { id, isPublished: true }
       }),
       8000,
       "project query"

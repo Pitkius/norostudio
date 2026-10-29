@@ -1,4 +1,14 @@
-# Freelancer Portfolio (Full‑stack)
+# Noro Studio
+
+Pilno ciklo portfolio ir paslaugų svetainė su projektų, paslaugų bei klientų užklausų administravimu.
+
+## Funkcionalumas
+
+- Viešas portfolio, paslaugų ir kontaktų turinys
+- Užklausų forma su duomenų saugojimu
+- Apsaugota administravimo panelė
+- Projektų ir paslaugų turinio valdymas
+- Next.js, TypeScript, Prisma ir PostgreSQL
 
 ## Paleidimas lokaliai
 
@@ -12,12 +22,10 @@ npm run dev
 
 Atidarykite: http://localhost:3000
 
-## Admin prisijungimas (local)
+## Admin prisijungimas lokaliai
 
-- **URL:** http://localhost:3000/studio-login-9xk2/login
-- **El. paštas:** `admin@norostudio.lt`
-- **Slaptažodis:** `admin123456`
+Nukopijuokite `.env.example` į `.env` ir pakeiskite `JWT_SECRET`, `ADMIN_EMAIL` bei `ADMIN_PASSWORD`. Nenaudokite pavyzdinių reikšmių produkcijoje.
 
-Po prisijungimo atsidaro: http://localhost:3000/studio-login-9xk2/dashboard
+Prisijungimo adresas: http://localhost:3000/studio-login-9xk2/login
 
 > Senas kelias `/admin` redirectina į pradžią. Naudokite tik `studio-login-9xk2`.

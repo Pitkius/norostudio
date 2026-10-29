@@ -4,15 +4,17 @@ import { requireAdmin } from "@/lib/admin-only";
 import { HttpError, requireString } from "@/lib/validation";
 
 const allowed = new Set(["NEW", "IN_PROGRESS", "DONE"]);
+type RouteContext = { params: Promise<{ id: string }> };
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: Request, { params }: RouteContext) {
   try {
-    requireAdmin();
+    await requireAdmin();
+    const { id } = await params;
     const body = await req.json();
     const status = requireString(body?.status, "status", { min: 1, max: 30 });
     if (!allowed.has(status)) throw new HttpError(400, "Invalid status");
     const inquiry = await prisma.inquiry.update({
-      where: { id: params.id },
+      where: { id },
       data: { status: status as any }
     });
     return NextResponse.json({ ok: true, inquiry });
@@ -23,10 +25,11 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(_req: Request, { params }: RouteContext) {
   try {
-    requireAdmin();
-    await prisma.inquiry.delete({ where: { id: params.id } });
+    await requireAdmin();
+    const { id } = await params;
+    await prisma.inquiry.delete({ where: { id } });
     return NextResponse.json({ ok: true });
   } catch (err: any) {
     const code = err instanceof HttpError ? err.status : 500;

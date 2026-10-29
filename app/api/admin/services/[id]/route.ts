@@ -4,9 +4,12 @@ import { requireAdmin } from "@/lib/admin-only";
 import { HttpError, optionalString, requireStringArray } from "@/lib/validation";
 import { asStringArray } from "@/lib/json-array";
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+type RouteContext = { params: Promise<{ id: string }> };
+
+export async function PUT(req: Request, { params }: RouteContext) {
   try {
-    requireAdmin();
+    await requireAdmin();
+    const { id } = await params;
     const body = await req.json();
     const data: Record<string, unknown> = {};
 
@@ -19,7 +22,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     if (body?.order !== undefined) data.order = typeof body.order === "number" ? body.order : 0;
     if (body?.isActive !== undefined) data.isActive = !!body.isActive;
 
-    const service = await prisma.servicePlan.update({ where: { id: params.id }, data });
+    const service = await prisma.servicePlan.update({ where: { id }, data });
     return NextResponse.json({
       ok: true,
       service: { ...service, features: asStringArray(service.features) }
@@ -31,10 +34,11 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(_req: Request, { params }: RouteContext) {
   try {
-    requireAdmin();
-    await prisma.servicePlan.delete({ where: { id: params.id } });
+    await requireAdmin();
+    const { id } = await params;
+    await prisma.servicePlan.delete({ where: { id } });
     return NextResponse.json({ ok: true });
   } catch (err: any) {
     const status = err instanceof HttpError ? err.status : 500;

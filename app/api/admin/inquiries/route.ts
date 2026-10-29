@@ -5,7 +5,7 @@ import { HttpError } from "@/lib/validation";
 
 export async function GET() {
   try {
-    requireAdmin();
+    await requireAdmin();
     const inquiries = await prisma.inquiry.findMany({
       orderBy: { createdAt: "desc" }
     });

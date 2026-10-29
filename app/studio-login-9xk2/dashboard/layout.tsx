@@ -3,8 +3,8 @@ import { ReactNode } from "react";
 import { getAdminFromCookies } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
-export default function AdminLayout({ children }: { children: ReactNode }) {
-  const admin = getAdminFromCookies();
+export default async function AdminLayout({ children }: { children: ReactNode }) {
+  const admin = await getAdminFromCookies();
   if (!admin) redirect("/studio-login-9xk2/login");
 
   return (
@@ -21,7 +21,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             action={async () => {
               "use server";
               const { cookies } = await import("next/headers");
-              cookies().set("portfolio_admin", "", { path: "/", maxAge: 0 });
+              (await cookies()).set("portfolio_admin", "", { path: "/", maxAge: 0 });
               redirect("/studio-login-9xk2/login");
             }}
           >

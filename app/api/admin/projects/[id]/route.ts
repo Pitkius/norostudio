@@ -4,9 +4,12 @@ import { requireAdmin } from "@/lib/admin-only";
 import { HttpError, optionalString, requireStringArray, requireUrl } from "@/lib/validation";
 import { asStringArray } from "@/lib/json-array";
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+type RouteContext = { params: Promise<{ id: string }> };
+
+export async function PUT(req: Request, { params }: RouteContext) {
   try {
-    requireAdmin();
+    await requireAdmin();
+    const { id } = await params;
     const body = await req.json();
     const data: Record<string, unknown> = {};
 
@@ -28,7 +31,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     if (body?.isPublished !== undefined) data.isPublished = !!body.isPublished;
 
     const project = await prisma.portfolioProject.update({
-      where: { id: params.id },
+      where: { id },
       data
     });
     return NextResponse.json({
@@ -46,10 +49,11 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(_req: Request, { params }: RouteContext) {
   try {
-    requireAdmin();
-    await prisma.portfolioProject.delete({ where: { id: params.id } });
+    await requireAdmin();
+    const { id } = await params;
+    await prisma.portfolioProject.delete({ where: { id } });
     return NextResponse.json({ ok: true });
   } catch (err: any) {
     const status = err instanceof HttpError ? err.status : 500;

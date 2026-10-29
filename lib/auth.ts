@@ -25,8 +25,8 @@ export function verifyAdminJwt(token: string): AdminJwtPayload {
   return { sub, email };
 }
 
-export function getAdminFromCookies(): AdminJwtPayload | null {
-  const token = cookies().get(AUTH_COOKIE)?.value;
+export async function getAdminFromCookies(): Promise<AdminJwtPayload | null> {
+  const token = (await cookies()).get(AUTH_COOKIE)?.value;
   if (!token) return null;
   try {
     return verifyAdminJwt(token);

@@ -1,8 +1,8 @@
 import { getAdminFromCookies } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
-export default function AdminIndex() {
-  const admin = getAdminFromCookies();
+export default async function AdminIndex() {
+  const admin = await getAdminFromCookies();
   if (!admin) {
     redirect("/studio-login-9xk2/login");
   }

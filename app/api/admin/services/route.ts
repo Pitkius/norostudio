@@ -6,7 +6,7 @@ import { asStringArray } from "@/lib/json-array";
 
 export async function GET() {
   try {
-    requireAdmin();
+    await requireAdmin();
     const services = await prisma.servicePlan.findMany({
       orderBy: [{ order: "asc" }, { createdAt: "desc" }]
     });
@@ -26,7 +26,7 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    requireAdmin();
+    await requireAdmin();
     const body = await req.json();
     const title = requireString(body?.title, "title", { min: 2, max: 120 });
     const description = requireString(body?.description, "description", { min: 10, max: 4000 });
